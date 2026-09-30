@@ -28,4 +28,6 @@ Install dependencies:
   pip install scapy
 Usage:
   sudo python Passive DNS Query Traffic Logger.py
-   
+Project Structure:
+   ├── Passive DNS Query Traffic Logger.py        # Core packet capture and logging engine
+   └── README.md        # Documentation
