@@ -5,11 +5,11 @@ from scapy.layers.inet import IP
 
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 
-class PassiveDnsMonitor:
+class PassiveDnsMonitor():
     def __init__(self, interface=None):
         self.interface = interface
     
-    def process_dns_frame(self, packet):
+    def process_dns_packet(self, packet):
         if packet.haslayer(IP) and packet.haslayer(DNS):
             dns_layer = packet[DNS]
             
@@ -17,60 +17,17 @@ class PassiveDnsMonitor:
                 source_ip = packet[IP].src
                 query_name = packet[DNSQR].qname.decode('utf-8', errors='ignore')
                 
-                print(f"[DNS REQUEST] Client: {source-ip:<15} queried -> {query_name}")
+                print("[DNS REQUEST] Client:",source-ip, "queried ->", query_name)
         
-    def start_capture(self, count=0):
-        """Spawns the socket sniffing engine targeting UDP port 53 exclusively."""
-        print(f" Monitoring local DNS transactions (UDP Port 53)...")
+    def start_sniffing(self, count=0):
+        """Spawns the socket sniffing engine targeting UDP port 53 only."""
+        print("Monitoring local DNS traffic on UDP port 53...")
         print("-" * 65)
     
-        sniff(iface=self.interface, filter="udp port 53", prn=self.process_dns_frame, store=0, count=count)
+        sniff(iface=self.interface, filter="udp port 53", prn=self.process_dns_packet, store=0, count=count)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     monitor = PassiveDnsMonitor()
     
-    monitor.start_capture(count=10)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    monitor.start_sniffing(count=10)
